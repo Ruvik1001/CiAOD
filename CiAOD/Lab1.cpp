@@ -71,7 +71,7 @@ void task5() {
 	cout << setw(25) << left <<
 		"Our mask befor: " << bitset<32>(1) << "\n" <<
 		setw(25) << left <<
-		"Our mask now:   " << bitset<32>(1u << bN) << "\n";
+		"Our mask now:   " << bitset<32>(1ul << bN) << "\n";
 	x |= 1 << bN;
 	cout << setw(25) << left <<
 		"2cc: " << bitset<32>(x) << "\n";
