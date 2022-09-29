@@ -48,17 +48,6 @@ private:
 		return s.find_first_not_of("0123456789") == s.npos;
 	}
 
-	bool file_is_cliar() {
-		bool return_value = false;
-		string s, temppath = path;
-		closefail();
-		ifstream f(temppath, ios_base::app);
-		if (!(f >> s)) return_value = true;
-		f.close();
-		openfail(temppath);
-		return return_value;
-	}
-
 public:
 	static bool createfile(string filename) {
 		if (good(filename))
@@ -157,4 +146,14 @@ public:
 		return stoi(ts);
 	}
 
+	bool file_is_cliar() {
+		bool return_value = false;
+		string s, temppath = path;
+		closefail();
+		ifstream f(temppath, ios_base::app);
+		if (!(f >> s)) return_value = true;
+		f.close();
+		openfail(temppath);
+		return return_value;
+	}
 };
