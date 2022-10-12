@@ -141,6 +141,12 @@
   <ItemGroup>
     <ClCompile Include="Lab2.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BinFile.h" />
+    <ClInclude Include="Lab2.h" />
+    <ClInclude Include="NumFail.h" />
+    <ClInclude Include="tester.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

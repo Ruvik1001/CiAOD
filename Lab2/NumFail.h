@@ -1,12 +1,16 @@
 #pragma once
 
+#ifndef __FILE_H__
+#define __FILE_H__
+
 #include<iostream>
+#include<iomanip>
 #include<fstream>
 #include<string>
 
 using namespace std;
 
-class NumFail {
+class NumFile {
 private:
 	fstream file;
 	string path;
@@ -33,7 +37,7 @@ private:
 		return true;
 	}
 
-	static bool alldigit(string str) {
+	static bool allDigit(string str) {
 		while (str.length()) {
 			string sub = str.substr(0, str.find(' '));
 			if (str.find(' ') != str.npos) str = str.substr(str.find(' ') + 1);
@@ -49,7 +53,7 @@ private:
 	}
 
 public:
-	static bool createfile(string filename) {
+	static bool createFile(string filename) {
 		if (good(filename))
 			return false;
 		ofstream f(filename);
@@ -60,15 +64,15 @@ public:
 		throw exception("can't create or find fail");
 	}
 
-	bool openfail(string filename) {
+	bool openFile(string filename) {
 		if (!good(filename))
 			return false;
-		closefail();	path = filename;
+		closeFile();	path = filename;
 		file.open(path, ios_base::in | ios_base::out | ios_base::app);
 		return true;
 	}
 
-	bool closefail() {
+	bool closeFile() {
 		if (!good(file))
 			return false;
 		file.clear();
@@ -77,17 +81,17 @@ public:
 		return true;
 	}
 
-	void createclearfile(string filename) {
+	void createClearFile(string filename) {
 		string temppath = path;
-		closefail();
+		closeFile();
 		ofstream f(filename);
 		f.close();
-		openfail(temppath);
+		openFile(temppath);
 	}
 
-	void openclearfile(string filename) {
-		createclearfile(filename);
-		openfail(filename);
+	void openClearFile(string filename) {
+		createClearFile(filename);
+		openFile(filename);
 	}
 
 	static bool print(string filename) {
@@ -102,58 +106,94 @@ public:
 
 	void print() {
 		string temppath = path;
-		closefail();
+		closeFile();
 		print(temppath);
-		openfail(temppath);
+		openFile(temppath);
 	}
 
-	bool addstr(string str) {
-		if (!good(file) || !alldigit(str))
+	bool addStr(string str) {
+		if (!good(file) || !allDigit(str))
 			return false;
 		bool is_clear = file_is_cliar();
 		string temppath = path;
-		closefail();
+		closeFile();
 		ofstream f(temppath, ios_base::app);
 		if (!is_clear) f << "\n" << str;
 		else f << str;
 		f.close();
-		openfail(temppath);
+		openFile(temppath);
 		return true;
 	}
 
-	int getcount() {
+	int sizeNum() {
 		if (!good(file))
 			return -1;
 		string ts, temppath = path;	int i = 0;
-		closefail();
+		closeFile();
 		ifstream f(temppath);
 		while (f >> ts) i++;
 		f.close();
-		openfail(temppath);
+		openFile(temppath);
 		return i;
 	}
 
-	int getnum(int index) {
-		if (!good(file) || index < 0 || index >= getcount())
+	int getNum(int index) {
+		if (!good(file) || index < 0 || index >= sizeNum())
 			return -1;
 		string ts, temppath = path;	int i = 0;
-		closefail();
+		closeFile();
 		ifstream f;
 		f.open(temppath);
 		for (f >> ts; i < index; f >> ts, i++);
 		f.close();
-		openfail(temppath);
+		openFile(temppath);
 		return stoi(ts);
 	}
 
 	bool file_is_cliar() {
 		bool return_value = false;
-		string s, temppath = path;
-		closefail();
-		ifstream f(temppath, ios_base::app);
-		if (!(f >> s)) return_value = true;
+		string s = "", temppath = path;
+		closeFile();
+		ifstream f(temppath);
+		if (!(f >> s) && s != "") return_value = true;
 		f.close();
-		openfail(temppath);
+		openFile(temppath);
 		return return_value;
 	}
+	
+	bool createMasFail(int sizeForNum = 10) {
+		string temp = "MasFail.txt", tempPath = this->path;
+		if (!good(file) || this->path == temp)
+			return false;
+		closeFile();
+		openFile(tempPath);
+		ofstream fout("MasFail.txt");
+		int cc = 0, cn = 0, size = sizeNum();
+		int* arr = new int[size];
+		for (int i = 0; i < size; i++) {
+			file >> arr[i];
+			arr[i] % 2 ? cn++ : cc++;
+		}
+		for (int i = 0; i < size; i++) {
+			if (arr[i] % 2)
+				fout << setw(sizeForNum) << left << arr[i];
+		}
+		while (cn < cc) {
+			fout << setw(sizeForNum) << left << "0";
+			cn++;
+		}
+		fout << "\n";
+		for (int i = 0; i < size; i++) {
+			if (arr[i] % 2 == 0)
+				fout << setw(sizeForNum) << left << arr[i];
+		}
+		while (cc < cn) {
+			fout << setw(sizeForNum) << left << "0";
+			cc++;
+		}
+		fout.close();
+		return true;
+	}
 };
+
+#endif // !__FILE_H__
