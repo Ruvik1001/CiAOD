@@ -65,6 +65,10 @@ private:
 	}
 
 public:
+	~BinFile() {
+		closeFile();
+	}
+
 	static bool createFile(string filename) {
 		if (good(filename))
 			return false;
@@ -231,12 +235,12 @@ public:
 
 	T* take(int position) {
 		if (!good(file))
-			return;
+			return nullptr;
 		setMode('a');
 		file.seekg(sizeof(T) * position, ios::_Seekbeg);
 		temp = nullptr;
 		try {
-			file.read((char*)temp, sizeof(T));
+			file.read((char*)&temp, sizeof(T));
 		}
 		catch (...) {
 			throw exception("ofstream operator \"<<\" for trmplate class not found");
@@ -245,20 +249,27 @@ public:
 		return temp;
 	}
 
+	T* takeFromCom1(const char* com_1) {
+		while (readData(temp) && temp->getCom1() != com_1);
+		return temp->getCom1() == com_1 ? temp : nullptr;
+	}
+
 	void push() {
 		if (!good(file))
 			return;
 		setMode('a');
 		file.seekp(sizeof(T) * take_ind, ios::_Seekbeg);
 		try {
-			file.write((char*)data, sizeof(T));
+			file.write((char*)temp, sizeof(T));
 		}
 		catch (...) {
 			throw exception("ofstream operator \"<<\" for trmplate class not found");
 		}
 	}
 
-	void getFromCom1(string path, const char* com_1) {
+	T* getTakeFile() { return temp; }
+
+	void copyAllFromCom1(string path, const char* com_1) {
 		ofstream f(path);
 		if (!good(file))
 			return;
@@ -270,7 +281,7 @@ public:
 		f.close();
 	}
 
-	void renameCom1(const char* lastName, const char* newName) {
+	void renameAllCom1(const char* lastName, const char* newName) {
 		setMode('a');
 		T obj;
 		while (file.read((char*)&obj, sizeof(T)))

@@ -8,10 +8,16 @@ using namespace std;
 class TESTER {
 private:
 	long num;
-	char comment_1[10], comment_2[40];
+	char comment_1[100], comment_2[400];
 public:
 	TESTER() {}
 	TESTER(long num, const char* com_1, const char* com_2) {
+		this->num = num;
+		strcpy_s(comment_1, com_1);
+		strcpy_s(comment_2, com_2);
+	}
+
+	void set(long num, const char* com_1, const char* com_2) {
 		this->num = num;
 		strcpy_s(comment_1, com_1);
 		strcpy_s(comment_2, com_2);
@@ -33,11 +39,11 @@ public:
 		return num;
 	}
 
-	char* getCom1() {
+	const char* getCom1() {
 		return comment_1;
 	}
 
-	char* getCom2() {
+	const char* getCom2() {
 		return comment_2;
 	}
 
@@ -47,7 +53,7 @@ public:
 
 ostream& operator<<(ostream& os, TESTER& t)
 {
-	os << t.num << " " << t.comment_1 << " " << t.comment_2 << "\n";
+	os << t.num << ' ' << t.comment_1 << ' ' << t.comment_2 << '\n';
 	return os;
 }
 
