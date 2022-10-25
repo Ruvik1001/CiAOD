@@ -8,6 +8,7 @@ using namespace std;
 const string path = "TESTer.txt";
 
 int main() {
+	
 	BinFile<TESTER> bf;
 	bf.openClearFile(path);
 	TESTER t;
@@ -29,13 +30,20 @@ int main() {
 	t.set(2345678, "Usov_V.D.", "Polezayevskaya");
 	bf.appendData(t);
 
-	//bf.take(4);
-	bf.takeFromCom1("Maslov G.A.");
-	bf.getTakeFile()->setCom2((char*)"St._Peterburg");
-	bf.push();
-
-	bf.print();
+	TESTER mt[10];
+	for (int i = 0; i < 10; i++)
+		mt[i] = TESTER(i + 1000000, "DB", "DB");
+	bf.appendData(mt, 10);
 	bf.toStandartFormat();
+	//bf.renameAllCom1("DB", "TESTER");
+
+	//bf.take(14);
+	bf.takeFromCom1("Maslov_G.A.");
+	bf.getObjFromTakeFile()->setCom2((char*)"St._Peterburg");
+	bf.push();
+	bf.toStandartFormat();
+	bf.print();
+
 	bf.closeFile();
 
 	return 0;

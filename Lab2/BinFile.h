@@ -15,8 +15,9 @@ private:
 	string path = "";
 	fstream file;
 	char mode = 'a';
+	streampos pos;
 	
-	T* temp;
+	T temp;
 	int take_ind;
 
 	static bool good(fstream& f) {
@@ -125,15 +126,15 @@ public:
 			return false;
 		try {
 			setMode('o');
-			file.write((char*)&data, sizeof(T));
+			data.write(file);
 		}
 		catch (...) {
-			throw exception("ofstream operator \"<<\" for trmplate class not found");
+			throw exception("bad write");
 		}
 		return true;
 	}
 
-	bool appendData(const T* data, const size_t size) {
+	bool appendData(T* data, const size_t size) {
 		if (!good(file))
 			return false;
 		for (int i = 0; i < size; i++)
@@ -141,17 +142,17 @@ public:
 		return true;
 	}
 
-	bool readData(T* data) {
+	bool readData(T& data) {
 		if (!good(file))
 			return false;
 		if (mode != 'a')
 			setMode('a');
 		try	{
-			if (!(file.read((char*)data, sizeof(T))))
+			if (!data.read(file))
 				return false;
 		}
 		catch (...) {
-			throw exception("ofstream operator \">>\" for trmplate class not found");
+			throw exception("bad read");
 		}
 		return true;
 	}
@@ -161,7 +162,7 @@ public:
 			return false;
 		setMode('a');
 		for (int i = 0; i < size; i++)
-			readData(data + i);
+			readData(*(data + i));
 		return true;
 	}
 
@@ -173,7 +174,7 @@ public:
 			return false;
 		T obj;
 		setMode('a');
-		while (file.read((char*)&obj, sizeof(T)))
+		while (obj.read(file))
 			fout << obj;
 		fout.close();
 		return true;
@@ -187,10 +188,10 @@ public:
 		try {
 			T obj;
 			while (fin >> obj)
-				fout.write((char*)&data, sizeof(T));
+				obj.write(fout);
 		}
 		catch (...) {
-			throw exception("ofstream operator \">>\" or \"<<\" for trmplate class not found, also template class may haven't base constructor");
+			throw exception("bad convertation to binary");
 		}
 		fin.close();
 		fout.close();
@@ -202,7 +203,7 @@ public:
 			return;
 		setMode('a');
 		T obj;
-		while (file.read((char*)&obj, sizeof(T)))
+		while (obj.read(file))
 			cout << obj << "\n";
 	}
 
@@ -212,10 +213,10 @@ public:
 		setMode('a');
 		file.seekp(sizeof(T) * position, ios::_Seekbeg);
 		try {
-			file.write((char*)&data, sizeof(T));
+			data.write(file);
 		}
 		catch (...) {
-			throw exception("ofstream operator \"<<\" for trmplate class not found");
+			throw exception("bad write");
 		}
 	}
 
@@ -226,10 +227,10 @@ public:
 		file.seekg(sizeof(T) * position, ios::_Seekbeg);
 	
 		try {
-			file.read((char*)&obj, sizeof(T));
+			obj.read(file);
 		}
 		catch (...) {
-			throw exception("ofstream operator \"<<\" for trmplate class not found");
+			throw exception("bad read");
 		}
 	}
 
@@ -237,37 +238,41 @@ public:
 		if (!good(file))
 			return nullptr;
 		setMode('a');
-		file.seekg(sizeof(T) * position, ios::_Seekbeg);
-		temp = nullptr;
+		file.seekg(temp.size() * position, ios::_Seekbeg);
+		pos = file.tellg();
 		try {
-			file.read((char*)&temp, sizeof(T));
+			if (!temp.read(file) || file.eof())
+				return nullptr;
 		}
 		catch (...) {
-			throw exception("ofstream operator \"<<\" for trmplate class not found");
+			throw exception("bad take");
 		}
-		if (temp) this->take_ind = position;
-		return temp;
+		this->take_ind = position;
+		return &temp;
 	}
 
-	T* takeFromCom1(const char* com_1) {
-		while (readData(temp) && temp->getCom1() != com_1);
-		return temp->getCom1() == com_1 ? temp : nullptr;
+	T* takeFromCom1(string com_1) {
+		take_ind = 0;	setMode('a');
+		while (readData(temp) && string(temp.getCom1()) != com_1) {
+			take_ind++;	cout << temp;
+		}
+		return string(temp.getCom1()) == com_1 ? &temp : nullptr;
 	}
 
 	void push() {
 		if (!good(file))
 			return;
 		setMode('a');
-		file.seekp(sizeof(T) * take_ind, ios::_Seekbeg);
+		file.seekp(temp.size() * take_ind, ios::_Seekbeg);
 		try {
-			file.write((char*)temp, sizeof(T));
+			temp.write(file);
 		}
 		catch (...) {
-			throw exception("ofstream operator \"<<\" for trmplate class not found");
+			throw exception("bad push");
 		}
 	}
 
-	T* getTakeFile() { return temp; }
+	T* getObjFromTakeFile() { return &temp; }
 
 	void copyAllFromCom1(string path, const char* com_1) {
 		ofstream f(path);
@@ -275,8 +280,8 @@ public:
 			return;
 		setMode('a');
 		T obj;
-		while (file.read((char*)&obj, sizeof(T)))
-			if (equal(obj.getCom1(), com_1))
+		while (obj.read(file))
+			if (string(obj.getCom1()) == string(com_1))
 				f << obj << "\n";
 		f.close();
 	}
@@ -284,12 +289,13 @@ public:
 	void renameAllCom1(const char* lastName, const char* newName) {
 		setMode('a');
 		T obj;
-		while (file.read((char*)&obj, sizeof(T)))
-			if (equal(obj.getCom1(), lastName)) {
-				obj.setCom1(newName);
-				file.seekp(-sizeof(T), ios::_Seekcur);
-				file.write((char*)&obj, sizeof(T));
-			}
+		int i = 0;
+		while (take(i++)) {
+			cout << getObjFromTakeFile() << "\n";
+			if (string(getObjFromTakeFile()->getCom1()) == string(lastName))
+				getObjFromTakeFile()->setCom2(newName);
+			push();
+		}
 	}
 };
 
