@@ -72,11 +72,15 @@ public:
 	unsigned int size() {
 		return sizeof(long) + sizeof(char[100]) * 2;
 	}
+
+	bool operator!=(TESTER& obj) {
+		return this->num != obj.num && this->comment_1 != obj.comment_1 && this->comment_2 != obj.comment_2;
+	}
 };
 
 ostream& operator<<(ostream& os, TESTER& t)
 {
-	os << t.num << ' ' << t.comment_1 << ' ' << t.comment_2 << '\n';
+	os << t.num << ' ' << t.comment_1 << ' ' << t.comment_2;
 	return os;
 }
 

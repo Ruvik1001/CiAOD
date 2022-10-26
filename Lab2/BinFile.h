@@ -6,6 +6,7 @@
 #include<iostream>
 #include<fstream>
 #include<string>
+#include<list>
 
 using namespace std;
 
@@ -57,6 +58,9 @@ private:
 		case 'a':
 			file.open(path, ios_base::in | ios_base::ate | ios_base::out | ios_base::binary);
 			break;
+		case 't':
+			file.open(path, ios_base::trunc | ios_base::out);
+			break;
 		default:
 			throw exception("mode error: mode not found");
 			break;
@@ -85,7 +89,7 @@ public:
 		if (!good(path))
 			return false;
 		closeFile();	this->path = path;	this->mode = mode;
-		setMode('a', 0);
+		setMode(mode, 0);
 		return true;
 	}
 
@@ -253,9 +257,8 @@ public:
 
 	T* takeFromCom1(string com_1) {
 		take_ind = 0;	setMode('a');
-		while (readData(temp) && string(temp.getCom1()) != com_1) {
-			take_ind++;	cout << temp;
-		}
+		while (readData(temp) && string(temp.getCom1()) != com_1)
+			take_ind++;	
 		return string(temp.getCom1()) == com_1 ? &temp : nullptr;
 	}
 
@@ -288,13 +291,41 @@ public:
 
 	void renameAllCom1(const char* lastName, const char* newName) {
 		setMode('a');
-		T obj;
-		int i = 0;
-		while (take(i++)) {
-			cout << getObjFromTakeFile() << "\n";
-			if (string(getObjFromTakeFile()->getCom1()) == string(lastName))
-				getObjFromTakeFile()->setCom2(newName);
-			push();
+		
+		auto fun = [&](T& objekt) {
+			if (string(objekt.getCom1()) == string(lastName))
+				objekt.setCom1(newName);
+		};
+		
+		T obj, temp;
+		fstream f("temp.txt", ios_base::binary | ios_base::trunc | ios_base::out);
+		while ((obj.read(file) | temp.read(file)) && obj != temp) {
+			fun(obj);			fun(temp);
+			obj.write(f);	temp.write(f);
+			//cout << "=================== " << obj << temp;
+
+		}
+		
+		f.close();
+
+		setMode('t');
+
+		fstream f1("temp.txt", ios_base::binary | ios_base::in);
+		while ((obj.read(f1) | temp.read(f1)) && obj != temp) {
+			obj.write(file);	temp.write(file);
+			//cout << "=================== " << obj << temp;
+		}
+		f1.close();
+	}
+
+	void getListFormCom1(const char* lastName, list<T>& l) {
+		setMode('a');
+		T obj, temp;
+		while ((obj.read(file) | temp.read(file)) && obj != temp) {
+			if (string(obj.getCom1()) == string(lastName))
+				l.push_back(obj);
+			if (string(temp.getCom1()) == string(lastName))
+				l.push_back(temp);
 		}
 	}
 };
