@@ -2,6 +2,7 @@
 
 #ifndef __BINFILE_H__
 #define __BINFILE_H__
+#define _DBO_(info) //{cout << "Debug information: " << info << "\n"; }
 
 #include<iostream>
 #include<fstream>
@@ -146,6 +147,13 @@ public:
 		return true;
 	}
 
+	void remove_data(int position) {
+		setMode('a');	T data;
+		while (data.read(file)) _DBO_(data);
+		_DBO_(data);
+		write(data, position);
+	}
+
 	bool readData(T& data) {
 		if (!good(file))
 			return false;
@@ -179,7 +187,7 @@ public:
 		T obj;
 		setMode('a');
 		while (obj.read(file))
-			fout << obj;
+			fout << obj << "\n";
 		fout.close();
 		return true;
 	}
@@ -206,8 +214,8 @@ public:
 		if (!good(file))
 			return;
 		setMode('a');
-		T obj;
-		while (obj.read(file))
+		T obj; int i = 0;
+		while (obj.read(file) && i++ < 16)
 			cout << obj << "\n";
 	}
 
@@ -215,7 +223,7 @@ public:
 		if (!good(file))
 			return;
 		setMode('a');
-		file.seekp(sizeof(T) * position, ios::_Seekbeg);
+		file.seekp(temp.size() * position, ios::_Seekbeg);
 		try {
 			data.write(file);
 		}

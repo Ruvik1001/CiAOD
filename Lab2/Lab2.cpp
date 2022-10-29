@@ -47,19 +47,21 @@ int main() {
 	cout << "Print our file:\n";
 	bf.print();
 
-	cout << "\nRename company TEST to Com_4\n";
+	cout << "\nRename company TEST to Com_4 and delete second str.\n";
 	bf.renameAllCom1("TEST", "Com_4");
+	bf.remove_data(2);
+	bf.toStandartFormat();
 
 	bf.print();
 
 	cout << "\nCreate list with company Com_1\n";
 	list<TESTER> x;
 	bf.getListFormCom1("Com_1", x);
-	for (int i = 0; i < x.size(); i++) {
+	while (x.size()) {
 		cout << x.front() << "\n";
 		x.pop_front();
 	}
-
+	//bf.toStandartFormat();
 
 	bf.closeFile();
 
