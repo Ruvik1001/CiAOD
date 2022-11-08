@@ -11,7 +11,7 @@ using namespace std;
 
 struct Node {
 	int code; //ключ
-	string name;
+	string name; //наименование
 	int position = -1;
 	void output() {
 		cout << "Code of town: " << code << endl
@@ -21,10 +21,10 @@ struct Node {
 class HashTable {
 	int size = 10; //размер таблицы
 	int amount = 0; //количество элементов в таблице
-	vector<list<Node>> table;
+	vector<list<Node>> table; //таблица
 public:
-	HashTable() {
-		table.resize(this->size);
+	HashTable() {//конструктор
+		table.resize(this->size); //выделение памяти
 	}
 	//добавить в таблицу 
 	void push(Node newNode) {
@@ -69,7 +69,7 @@ public:
 		}
 	}
 
-	~HashTable() {
+	~HashTable() { //деструтктор
 		size = 0;
 		amount = 0;
 		for (auto it = table.begin(); it != table.end(); it++) {

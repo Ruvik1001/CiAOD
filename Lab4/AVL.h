@@ -135,7 +135,7 @@ void get_all(vector<obj>& v, node* root) {
 	if (root->right) get_all(v, root->right);
 }
 
-struct Trunk
+struct Trunk //вспомогательная структура для вывода дерева
 {
 	Trunk* prev;
 	string str;
@@ -145,7 +145,7 @@ struct Trunk
 		this->str = str;
 	}
 
-	// Вспомогательная функция для печати ветвей бинарного дерева
+	// Вспомогательная функция для печати ветвей дерева
 	static void showTrunks(Trunk* p) {
 		if (p == nullptr)
 			return;
@@ -154,7 +154,7 @@ struct Trunk
 	}
 };
 
-void printTree(node* root, Trunk* prev, bool isLeft) {
+void printTree(node* root, Trunk* prev, bool isLeft) { //вывод дерева рекурсивно
 
 	if (root == nullptr)
 		return;

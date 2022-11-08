@@ -4,12 +4,15 @@
 #include "AVL.h"
 #include <vector>
 
+//File Control for AVL (в данном случае не AVL, а рандоменизированное
 class FCAVL {
 private:
-	fstream file;
-	node* avl = nullptr;
+	fstream file; //Файл
+	node* avl = nullptr; //Указатель на корень
 public:
-	FCAVL() {}
+	FCAVL() {} 
+
+	//Конструктоор для считывания данных по умолчанию
 	FCAVL(string path) {
 		ifstream f(path);
 		obj o;
@@ -18,6 +21,7 @@ public:
 		f.close();
 	}
 
+	//Запись данных в бинарный файл
 	void write() {
 		file.open("binary.txt", ios_base::trunc | ios_base::out | ios_base::binary);
 		vector<obj> v;
@@ -28,15 +32,18 @@ public:
 		file.close();
 	}
 
+	//Деструктор
 	~FCAVL()
 	{
 		file.close();
 	}
 
+	//Добавление элемента в дерево
 	void push(obj o) {
 		avl = insert(avl, o);
 	}
 
+	//Вывод прямым обходом
 	void print() {
 		const std::function<void(node*)> f = [&f](node* root)->void {
 			if (root->left) f(root->left);
@@ -46,14 +53,17 @@ public:
 		f(avl);
 	}
 
+	//поиск объекта по ключу
 	bool find(obj o) {
 		return _find(avl, o) ? 1 : 0;
 	}
 
+	//удаление объекта по ключу
 	void remove(obj o) {
 		_remove(avl, o);
 	}
 
+	//получение указателя на корень
 	node* get_head() {
 		return avl;
 	}

@@ -4,12 +4,15 @@
 #include <fstream>
 #include "obj.h"
 
+//File Control for Binary Tree Search (шаблонное)
 template <typename Ty>
 class FCBTS : public BTS<Ty> {
 private:
-	fstream file;
+	fstream file; //фал с которым работаем
 public:
 	FCBTS() {}
+
+	//Конструктоор для считывания данных по умолчанию
 	FCBTS(string path) {
 		ifstream f(path);
 		Ty obj;
@@ -18,6 +21,7 @@ public:
 		f.close();
 	}
 
+	//Запись в бинарный файл
 	void write() {
 		file.open("binary.txt", ios_base::trunc | ios_base::out | ios_base::binary);
 		vector<Ty> v;
@@ -28,6 +32,7 @@ public:
 		file.close();
 	}
 
+	//Деструктор
 	~FCBTS()
 	{
 		file.close();

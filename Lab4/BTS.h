@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define DB
+//#define DB
 
 #ifdef DB
 #define dbo(s) { cout << "DEBUG output: " << s << '\n'; }
@@ -20,34 +20,35 @@ using namespace std;
 #define dbo(s)
 #endif // DB
 
+//шаблонная реализация
 template <typename Ty>
-class BTS {
+class BTS { //бинарное дерево поиска
 protected:
-	struct Node {
+	struct Node { //узел бин дерева
 		Node* left = nullptr, * right = nullptr;
 		Ty data;
 
+		//конструкторы для разных ситуаций
 		Node() {}
 		Node(Ty data) : data(data) {}
 		Node(Node* to_low, Ty data) : data(data) { to_low->left = this; }
 		Node(Ty data, Node* to_high) : data(data) { to_high->right = this; }
 
-		~Node() {
+		~Node() { //деструктор
 			if (left)	delete left;
 			if (right)	delete right;
 		}
 
-		void print() {
+		void print() {//симметричный вывод
 			if (left) left->print();
 			std::cout << data << "\n";
 			if (right) right->print();
 		};
 	};
 
-	Node* head;
+	Node* head;//указатель на корень
 
-	struct Trunk
-	{
+	struct Trunk {//вспомогательная конструкция для вывода дерева
 		Trunk* prev;
 		string str;
 
@@ -70,7 +71,7 @@ public:
 	BTS(Ty data);
 	~BTS();
 
-	void push(Ty data);
+	void push(Ty data); 
 	bool find(Ty data);
 	void remove(Ty data);
 
@@ -83,19 +84,23 @@ public:
 
 #endif // !__BTS_H__
 
+//пустой ктор
 template<typename Ty>
 inline BTS<Ty>::BTS() {}
 
+//параметризированный ктор
 template<typename Ty>
 inline BTS<Ty>::BTS(Ty data) {
 	head = new Node(data);
 }
 
+//деструктор
 template<typename Ty>
 inline BTS<Ty>::~BTS() {
 	delete head;
 }
 
+//добавление элемента в дерево
 template<typename Ty>
 inline void BTS<Ty>::push(Ty data) {
 	Node* ptr = head;
@@ -124,10 +129,11 @@ inline void BTS<Ty>::push(Ty data) {
 			ptr = ptr->right;
 		}
 		
-		if (!ptr) throw ("BTS::push error");
+		if (!ptr) throw exception("BTS::push error");
 	}
 }
 
+//поиск ключа
 template<typename Ty>
 inline bool BTS<Ty>::find(Ty data) {
 	Node* ptr = head;
@@ -143,6 +149,7 @@ inline bool BTS<Ty>::find(Ty data) {
 	}
 }
 
+//удаление ключа
 template<typename Ty>
 inline void BTS<Ty>::remove(Ty data) {
 	BTS* temp = new BTS();
@@ -165,11 +172,13 @@ inline void BTS<Ty>::remove(Ty data) {
 	temp->head = nullptr;
 }
 
+//вывод прямым обходом
 template<typename Ty>
 inline void BTS<Ty>::print() {
 	if (head) head->print();
 }
 
+//вывод дерева
 template<typename Ty>
 inline void BTS<Ty>::printTree(Node* root, Trunk* prev, bool isLeft) {
 	
@@ -203,6 +212,7 @@ inline void BTS<Ty>::printTree(Node* root, Trunk* prev, bool isLeft) {
 	printTree(root->left, trunk, false);
 }
 
+//получение вектора всех элементов
 template<typename Ty>
 inline void BTS<Ty>::get_all(vector<Ty>& v, Node* root) {
 	if (!head) return;

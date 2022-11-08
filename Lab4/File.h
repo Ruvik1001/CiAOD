@@ -29,12 +29,12 @@ public:
 			<< newNode.name;
 	}
 
-	void output() {
+	void output() { //вывод
 		this->hashTable->output();
 	}
 
 
-	void pop(int key) {
+	void pop(int key) { //удаление эемента
 		hashTable->pop(key);
 	}
 
