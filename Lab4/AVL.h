@@ -11,26 +11,15 @@ struct node // структура для представления узлов дерева
 	node(obj k) { key = k; left = right = 0; size = 1; }
 };
 
-node* find(node* p, obj k) // поиск ключа k в дереве p
+node* _find(node* p, obj k) // поиск ключа k в дереве p
 {
 	if (!p) return 0; // в пустом дереве можно не искать
 	if (k == p->key)
 		return p;
 	if (k < p->key)
-		return find(p->left, k);
+		return _find(p->left, k);
 	else
-		return find(p->right, k);
-}
-
-node* insert(node* p, obj k) // классическая вставка нового узла с ключом k в дерево p
-{
-	if (!p) return new node(k);
-	if (p->key > k)
-		p->left = insert(p->left, k);
-	else
-		p->right = insert(p->right, k);
-	fixsize(p);
-	return p;
+		return _find(p->right, k);
 }
 
 int getsize(node* p) // обертка для поля size, работает с пустыми деревьями (t=NULL)
@@ -42,6 +31,17 @@ int getsize(node* p) // обертка для поля size, работает с пустыми деревьями (t=N
 void fixsize(node* p) // установление корректного размера дерева
 {
 	p->size = getsize(p->left) + getsize(p->right) + 1;
+}
+
+node* insert_classic(node* p, obj k) // классическая вставка нового узла с ключом k в дерево p
+{
+	if (!p) return new node(k);
+	if (p->key > k)
+		p->left = insert_classic(p->left, k);
+	else
+		p->right = insert_classic(p->right, k);
+	fixsize(p);
+	return p;
 }
 
 node* rotateright(node* p) // правый поворот вокруг узла p
@@ -112,7 +112,7 @@ node* join(node* p, node* q) // объединение двух деревьев
 	}
 }
 
-node* remove(node* p, obj k) // удаление из дерева p первого найденного узла с ключом k 
+node* _remove(node* p, obj k) // удаление из дерева p первого найденного узла с ключом k 
 {
 	if (!p) return p;
 	if (p->key == k)
@@ -122,13 +122,18 @@ node* remove(node* p, obj k) // удаление из дерева p первого найденного узла с к
 		return q;
 	}
 	else if (k < p->key)
-		p->left = remove(p->left, k);
+		p->left = _remove(p->left, k);
 	else
-		p->right = remove(p->right, k);
+		p->right = _remove(p->right, k);
 	return p;
 }
 
-
+void get_all(vector<obj>& v, node* root) {
+	if (!root) return;
+	v.push_back(root->key);
+	if (root->left) get_all(v, root->left);
+	if (root->right) get_all(v, root->right);
+}
 
 struct Trunk
 {

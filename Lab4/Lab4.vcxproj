@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="AVL.h" />
     <ClInclude Include="BTS.h" />
+    <ClInclude Include="FCAVL.h" />
     <ClInclude Include="FCBTS.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="HashTable.h" />

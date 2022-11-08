@@ -14,8 +14,8 @@ struct Node {
 	string name;
 	int position = -1;
 	void output() {
-		cout << "Код города: " << code << endl
-			<< "Наименование: " << name;
+		cout << "Code of town: " << code << endl
+			<< "Name: " << name;
 	}
 };
 class HashTable {
@@ -52,18 +52,18 @@ public:
 			cout << i + 1 << ") ";
 			if (!table[i].empty()) {
 				for (auto it = table[i].begin(); it != table[i].end(); it++) {
-					cout << (*it).code << " ";
+					cout << (*it).code << " " << (*it).name << "| ";
 				}
 			}
 			cout << endl;
 		}
 	}
 	//найти запись по ключу
-	Node find(int code) {
+	Node* find(int code) {
 		int hash = this->hash(code);
 		for (auto it = table[hash].begin(); it != table[hash].end(); it++) {
 			if ((*it).code == code) {
-				return *it;
+				return &(*it);
 				break;
 			}
 		}
@@ -93,7 +93,7 @@ private:
 	}
 	//рехэширование таблицы
 	void rehash() {
-		cout << "////////////Рехеширование таблицы////////////\n";
+		cout << "////////////Rehash table////////////\n";
 		this->amount = 0;
 		vector<list<Node>> temp(table);
 		this->size *= 2;

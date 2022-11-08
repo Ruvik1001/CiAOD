@@ -11,12 +11,13 @@ public:
 	File(string path) {
 		IFile.open(path);
 		OFile.open(path, ios::app);
+
 		hashTable = new HashTable();
 		this->fillTable();
 	}
 	//поиск записи по ключу
-	Node find(int key) {
-		return this->hashTable->find(key);
+	bool find(int key) {
+		return this->hashTable->find(key) ? 1 : 0;
 	}
 	//всорптавка записи в таблицу и файл
 	void push(Node newNode) {
@@ -60,21 +61,3 @@ private:
 		}
 	}
 };
-
-//void main() {
-//	setlocale(LC_ALL, "Russian");
-//	cout << "Вывод таблицы" << endl;
-//	File* file = new File("database.txt");
-//	file->output();
-//
-//	cout << endl << "Добавление новой записи: 678789, Новгород" << endl;
-//	Node node = { 678789, "Новгород" };
-//	file->push(node);
-//	file->output();
-//
-//	cout << endl << "Удаление по ключу: " << endl;
-//	file->find(678789).output();
-//	cout << endl;
-//	file->pop(179865);
-//	file->output();
-//}
