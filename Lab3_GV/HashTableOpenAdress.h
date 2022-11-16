@@ -1,54 +1,9 @@
 #pragma once
 #define razdel { cout << "\n=========================================================\n"; }
 
-#include <iostream>
-#include <functional>
-#include <vector>
+#include "Object.h"
 
-using namespace std;
-
-struct Object {
-	int num = -1;
-	char name[100] = "\0";
-	char adress[100] = "\0";
-
-	Object() {}
-
-	Object(int num, char* name, char* adress) : num(num) {
-		strcpy_s(this->name, name);
-		strcpy_s(this->adress, adress);
-	}
-
-	Object(int num, const char* name, const char* adress) : num(num) {
-		strcpy_s(this->name, name);
-		strcpy_s(this->adress, adress);
-	}
-
-	Object(Object& other) {
-		this->num = other.num;
-		strcpy_s(this->name, other.name);
-		strcpy_s(this->adress, other.adress);
-	}
-
-	bool operator==(Object& obj) {
-		const function<bool(char*, char*)> equal_str = [&](char* a, char* b)->bool {
-			if (*a != *b) return 0;
-			if (*a == '\0' && *b == '\0') return 1;
-			return equal_str(++a, ++b);
-		};
-		return num == obj.num && equal_str(name, obj.name) && equal_str(adress, obj.adress);
-	}
-
-	friend ostream& operator<<(ostream& os, Object& obj);
-};
-
-ostream& operator<<(ostream& os, Object& obj)
-{
-	os << obj.num << " " << obj.name << " " << obj.adress;
-	return os;
-}
-
-class HashTable {
+class HashTableOpenAdress {
 private:
 	size_t capasity = 10;
 	size_t count = 0;
@@ -78,12 +33,12 @@ private:
 
 public:
 
-	HashTable() {
+	HashTableOpenAdress() {
 		table = new Object* [capasity];
 		for (int i = 0; i < capasity; i++) table[i] = nullptr;
 	}
 
-	HashTable(size_t capasity) : capasity(capasity) {
+	HashTableOpenAdress(size_t capasity) : capasity(capasity) {
 		table = new Object* [capasity];
 		for (int i = 0; i < capasity; i++) table[i] = nullptr;
 	}
@@ -138,6 +93,11 @@ public:
 		};
 
 		f(1, 0);
+	}
+
+	void _GALL(vector<Object*>& v) {
+		for (int i = 0; i < capasity; i++)
+			if (table[i]) v.push_back(table[i]);
 	}
 
 	void print() {
