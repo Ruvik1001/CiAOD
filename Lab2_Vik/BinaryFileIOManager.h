@@ -299,9 +299,7 @@ public:
 	* Create copy in binary form to "BINARY_" + your fileName
 	* Throws: [0]"Name error"
 	*/
-	void copyToBinary(string fileName = "") {
-		fileName = fileName.size() ? fileName : fileNameSaved;
-
+	void copyToBinary(string fileName) {
 		good(fileName, 1);
 
 		fin.open(fileName, ios_base::binary);
