@@ -13,12 +13,6 @@ private:
 	static const char* defaultData;
 
 public:
-	IncuranceClient() {
-		id = defaultData;
-		companyName = defaultData;
-		surname = defaultData;
-	}
-
 	IncuranceClient(string id = defaultData, string companyName = defaultData, string surname = defaultData) {
 		this->id = id.c_str();
 		this->companyName = companyName.c_str();
@@ -47,6 +41,15 @@ public:
 
 		return (const char*)("ERROR");
 	}
+
+	void setCompanyName(string companyName) {	
+		this->companyName = companyName.c_str();
+	}
+
+	string getCompanyName() {
+		return string(companyName);
+	}
+
 
 	friend istream& operator>>(istream& is, IncuranceClient& client);
 	friend ostream& operator<<(ostream& os, IncuranceClient& client);
@@ -326,9 +329,48 @@ public:
 };
 
 void BinaryFileIOManager<IncuranceClient>::getClients(string companyName, string fileName) {
+	fileName = fileName.size() ? fileName : fileNameSaved;
+	good(fileName, 1);
+	fin.open(fileName, ios_base::binary);
+
+	fout.open(companyName + ".txt");
+	IncuranceClient temp;
+
+	while (fin.read((char*)&temp, sizeof(IncuranceClient)))
+		if (temp.getCompanyName() == companyName)
+			fout << temp << "\n";
+
+	fin.close();
+	fout.close();
 
 }
 
-void BinaryFileIOManager<IncuranceClient>::renameCompany(string companyName, string companyNameNew, string fileName) {
+void BinaryFileIOManager<IncuranceClient>::renameCompany(string companyNameLast, string companyNameNew, string fileName) {
+	fileName = fileName.size() ? fileName : fileNameSaved;
+	good(fileName, 1);
+	IncuranceClient temp;
+
+	function<void(string, string)> f = [&](string fromFile, string toFile)->void {
+
+		fin.open(fromFile, ios_base::binary);
+		fout.open(toFile, ios_base::binary);;
+
+
+
+		while (fin.read((char*)&temp, sizeof(IncuranceClient))) {
+			
+			if (temp.getCompanyName() == companyNameLast)
+				temp.setCompanyName(companyNameNew);
+
+			fout.write((char*)&temp, sizeof(IncuranceClient));
+
+		}
+
+		fin.close();
+		fout.close();
+	};
+
+	f(fileName, "TempForRenameCompany.txt");
+	f("TempForRenameCompany.txt", fileName);
 
 }
