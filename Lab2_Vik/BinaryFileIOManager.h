@@ -342,7 +342,6 @@ void BinaryFileIOManager<IncuranceClient>::getClients(string companyName, string
 
 	fin.close();
 	fout.close();
-
 }
 
 void BinaryFileIOManager<IncuranceClient>::renameCompany(string companyNameLast, string companyNameNew, string fileName) {
@@ -354,8 +353,6 @@ void BinaryFileIOManager<IncuranceClient>::renameCompany(string companyNameLast,
 
 		fin.open(fromFile, ios_base::binary);
 		fout.open(toFile, ios_base::binary);;
-
-
 
 		while (fin.read((char*)&temp, sizeof(IncuranceClient))) {
 			
@@ -372,5 +369,4 @@ void BinaryFileIOManager<IncuranceClient>::renameCompany(string companyNameLast,
 
 	f(fileName, "TempForRenameCompany.txt");
 	f("TempForRenameCompany.txt", fileName);
-
 }
