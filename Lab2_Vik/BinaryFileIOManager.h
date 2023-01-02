@@ -7,16 +7,21 @@
 
 using namespace std;
 
-struct IncuranceClient {
+class IncuranceClient {
 private:
-	const char* id,* companyName,* surname;
-	static const char* defaultData;
+	char id[100], companyName[100], surname[100];
 
 public:
-	IncuranceClient(string id = defaultData, string companyName = defaultData, string surname = defaultData) {
-		this->id = id.c_str();
-		this->companyName = companyName.c_str();
-		this->surname = surname.c_str();
+	IncuranceClient(string id = "NO_INFORMATION_AVAILABLE", string companyName = "NO_INFORMATION_AVAILABLE", string surname = "NO_INFORMATION_AVAILABLE") {
+		strcpy_s(this->id, 100, id.c_str());
+		strcpy_s(this->companyName, 100, companyName.c_str());
+		strcpy_s(this->surname, 100, surname.c_str());
+	}
+
+	IncuranceClient(const IncuranceClient& other) {
+		strcpy_s(this->id, 100, other.id);
+		strcpy_s(this->companyName, 100, other.companyName);
+		strcpy_s(this->surname, 100, other.surname);
 	}
 
 	const char* operator[](int index) {
@@ -43,7 +48,7 @@ public:
 	}
 
 	void setCompanyName(string companyName) {	
-		this->companyName = companyName.c_str();
+		strcpy_s(this->companyName, 100, companyName.c_str());
 	}
 
 	string getCompanyName() {
@@ -55,15 +60,13 @@ public:
 	friend ostream& operator<<(ostream& os, IncuranceClient& client);
 };
 
-const char* IncuranceClient::defaultData = "NO INFORMATION AVAILABLE";
-
 istream& operator>>(istream& is, IncuranceClient& client) {
 	string buf[3];
 	is >> buf[0] >> buf[1] >> buf[2];
 	
-	client.id			=	buf[0].c_str();
-	client.companyName	=	buf[1].c_str();
-	client.surname		=	buf[2].c_str();
+	strcpy_s(client.id, 100, buf[0].c_str());
+	strcpy_s(client.companyName, 100, buf[1].c_str());
+	strcpy_s(client.surname, 100, buf[2].c_str());
 	
 	return is;
 }
@@ -91,14 +94,16 @@ class BinaryFileIOManager {
 
 	bool good(string fileName, int warning = 0) {
 		if (!checkFileName(fileName))
-			throw exception(errors[0].c_str());
+			throw exception(errors[2].c_str());
 
 		if (!warning)
 			return true;
 
-		fin.open(fileName);
-		if (!fin.is_open())
-			throw exception(errors[1].c_str());
+		fin.open(fileName, ios_base::binary);
+		if (!fin.is_open()) {
+			fin.close();
+			throw exception(errors[0].c_str());
+		}
 		fin.close();
 
 		return true;
@@ -124,13 +129,14 @@ public:
 
 		good(fileName);
 
-		fin.open(fileName);
+		fin.open(fileName, ios_base::binary);
 		if (fin.is_open()) {
 			fin.close();
 			throw exception(errors[1].c_str());
 		}
+		fin.close();
 
-		fout.open(fileName);
+		fout.open(fileName, ios_base::binary);
 		fout.close();
 	}
 
@@ -144,7 +150,7 @@ public:
 		good(fileName, 1);
 
 		fin.open(fileName, ios_base::binary);
-		 
+
 		T temp;
 		while (fin.read((char*)&temp, sizeof(T)))
 			cout << temp << "\n";
@@ -196,6 +202,22 @@ public:
 	}
 
 	/*
+	* Return count objects in file
+	* Throws: [0]"Name error"
+	*/
+	int count(string fileName = "") {
+		fileName = fileName.size() ? fileName : fileNameSaved;
+
+		good(fileName, 1);
+
+		fin.open(fileName, ios_base::binary | ios_base::ate);
+		int size = fin.tellg() / sizeof(T);
+		fin.close();
+
+		return size;
+	}
+
+	/*
 	* Remove data by index
 	* Throws: [0]"Name error"
 	*/
@@ -243,9 +265,11 @@ public:
 
 		fstream f(fileName, ios_base::binary | ios_base::in | ios_base::out | ios_base::ate);
 
-		f.seekg(f.end - sizeof(T));
+		f.seekg(sizeof(T) * (count() - 1));
 		f.read((char*)&temp, sizeof(T));
-		f.seekp(f.beg + sizeof(T) * index);
+		f.clear();
+
+		f.seekp(0 + sizeof(T) * index, f.beg);
 		f.write((char*)&temp, sizeof(T));
 
 		f.close();

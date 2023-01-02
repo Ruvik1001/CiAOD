@@ -213,6 +213,7 @@ int BFIOM_TESTER() {
 
 	string str, temp, arr_data[3];
 	int mode = 1;
+	IncuranceClient* t;
 
 	while (true) {
 		cout <<
@@ -222,10 +223,10 @@ int BFIOM_TESTER() {
 			"Menu:\n" <<
 			"1. Set default file name (only for default mode work)\n" <<
 			"2. Create file\n" <<
-			"3. Push new num client\n" <<
+			"3. Push new client\n" <<
 			"4. Print file\n" <<
 			"5. Get by index in file\n" <<
-			"6. Remove num by key\n" <<
+			"6. Remove by key\n" <<
 			"7. Copy in new file in normal format\n" <<
 			"8. Copy from normal file to new binary\n" <<
 			"9. Personal function\n" <<
@@ -268,7 +269,7 @@ int BFIOM_TESTER() {
 		case '3':
 			if (mode) {
 				try {
-					f.pushNewData(IncuranceClient(to_string(1000000 + rand() % 9000000 ), companys[rand() % 3], names[rand() % 10]));
+					f.pushNewData(IncuranceClient(to_string(1000000 + rand() % 9000000), companys[rand() % 3], names[rand() % 10]));
 				}
 				catch (const exception& ex) {
 					cout << ex.what();
@@ -277,7 +278,7 @@ int BFIOM_TESTER() {
 			else {
 				cout << "Input file name whith \".txt\" on end: "; cin >> str;
 				try {
-					cout << "Plise, enter some info without spase in company name (\"Polis num\", \"Company name\", \"Surname\"):\n";
+					cout << "Please, enter some info without spase in company name (\"Polis num\", \"Company name\", \"Surname\"):\n";
 					cin >> arr_data[0] >> arr_data[1] >> arr_data[2];
 					f.pushNewData(IncuranceClient(arr_data[0], arr_data[1], arr_data[2]));
 				}
@@ -310,7 +311,7 @@ int BFIOM_TESTER() {
 		case '5':
 			if (mode) {
 				try {
-					cout << "By index 3: " << f.getByIndex(3);
+					cout << "By index 3: " << *f.getByIndex(3);
 				}
 				catch (const exception& ex) {
 					cout << ex.what();
@@ -320,7 +321,7 @@ int BFIOM_TESTER() {
 				cout << "Input file name whith \".txt\" on end: "; cin >> str;
 				try {
 					cout << "Input index: "; cin >> temp;
-					cout << "By index " << temp << " " << f.getByIndex(stoi(temp), str);
+					cout << "By index " << temp << " " << *f.getByIndex(stoi(temp), str);
 				}
 				catch (const exception& ex) {
 					cout << ex.what();
@@ -387,7 +388,7 @@ int BFIOM_TESTER() {
 				"Ans: ";	cin >> str;
 			switch (str[0])
 			{
-			case 1:
+			case '1':
 				if (mode) {
 					try {
 						cout << "Will be create new file with client of \"Company1\"";
@@ -409,7 +410,7 @@ int BFIOM_TESTER() {
 				}
 				break;
 
-			case 2:
+			case '2':
 				if (mode) {
 					try {
 						cout << "Will be rename \"Company1\" to \"RenameCompany\"";
@@ -462,11 +463,12 @@ int BFIOM_TESTER() {
 
 int main(string arg[]) {
 	srand(time(NULL));
+	BFIOM_TESTER();
 	while (true) {
 		cout << "PUSH:\n" <<
 			"1 - FileIOManager\n" <<
 			"2 - BinaryFileIOManager\n" <<
-			"Other - quit\n\n";
+			"0 - quit\n\n";
 		
 		switch (_getch() - (int)'0') {
 		case 1:
@@ -475,7 +477,7 @@ int main(string arg[]) {
 		case 2:
 			BFIOM_TESTER();
 			break;
-		default:
+		case 0:
 			return 0;
 		}
 	}
