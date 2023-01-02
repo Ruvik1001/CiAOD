@@ -24,6 +24,7 @@
     <ProjectGuid>{d08ba65e-2faa-4a15-9939-42ccb7cc5598}</ProjectGuid>
     <RootNamespace>Lab2Vik</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Lab2</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -139,7 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Lab2_Vik.cpp" />
+    <ClCompile Include="Lab2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BinaryFileIOManager.h" />
