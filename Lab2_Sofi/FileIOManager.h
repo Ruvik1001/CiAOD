@@ -28,7 +28,7 @@ class FileIOManager {
 
 		fin.open(fileName);
 		if (!fin.is_open())
-			throw exception(errors[1].c_str());
+			throw exception(errors[2].c_str());
 		fin.close();
 
 		return true;
