@@ -142,6 +142,7 @@
     <ClCompile Include="Lab2_Vik.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryFileIO.h" />
     <ClInclude Include="NumFileIO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

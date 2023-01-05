@@ -12,7 +12,7 @@ class NumFileIO {
 private:
 	fstream f;
 	string Name = "";
-	string erors[4] = { "Name error", "File not found", "File already exist", "Index out of bound" };
+	string errors[5] = { "Name error", "File not found", "File already exist", "Index out of bound", "Data error" };
 
 	/*
 	* Good get fileName for check and it can check file on mode:
@@ -39,9 +39,9 @@ private:
 			if (checkName())
 				throw exception(string(ERROR + "checkExist get error from checkName").c_str());
 			
-			ifstream f(fileName);
-			bool exist = f.is_open();
-			f.close();
+			ifstream fin(fileName, ios_base::in);
+			bool exist = fin.is_open();
+			fin.close();
 			return exist ? 0 : 2;
 		};
 
@@ -49,14 +49,17 @@ private:
 			if (checkExist())
 				throw exception(string(ERROR + "checkVoid get error from checkExist").c_str());
 
-			ofstream fout(fileName, ios_base::ate);
-			bool Void = fout.tellp() == 0;
-			fout.close();
+			fstream temp(fileName, ios_base::app | ios_base::ate);
+			bool Void = temp.tellp() == 0;
+			temp.close();
 			return Void ? 0 : 3;
 		};
 
 		vector<function<int()>> checks = { checkName, checkExist, checkVoid };
 		
+		if (mode > (checks.size() - 1) * 2 || mode < 0)
+			throw exception(string(ERROR + "mode value not in range").c_str());
+
 		if (mode < checks.size())
 			return checks[mode]();
 		
@@ -76,7 +79,7 @@ public:
 	*/
 	void setDefaultFileName(string fileName) {
 		if (good(fileName))
-			throw exception(erors[0].c_str());
+			throw exception(errors[0].c_str());
 
 		Name = fileName;
 	}
@@ -89,11 +92,133 @@ public:
 		fileName = fileName.size() == 0 ? Name : fileName;
 		int code = good(fileName, 3);
 		if (!code)
-			throw exception(erors[2].c_str());
+			throw exception(errors[2].c_str());
 		if (code == 1)
-			throw exception(erors[0].c_str());
+			throw exception(errors[0].c_str());
 
 		f.open(fileName, ios_base::out);
+		f.close();
+	}
+
+	/*
+	* Function push new line into file
+	* Throws: [0]"Name error", [4]"Data error"
+	*/
+	void push(string str, string fileName = "") {
+		fileName = fileName.size() == 0 ? Name : fileName;
+		if (good(fileName))
+			throw exception(errors[0].c_str());
+
+		function<bool(string)> correct = [&](string sub)->bool {
+			sub = sub.find('-') == sub.npos ? "" : sub.substr(sub.find('-'));
+			if (sub.size() && sub.substr(1, 1).find_first_not_of("0123456789"))
+				return false;
+			else if (sub.size())
+				return correct(sub.substr(1));
+			return true;
+		};
+
+		if (str.find_first_not_of("-0123456789 ") != str.npos || !correct(str))
+			throw exception(errors[4].c_str());
+
+		f.open(fileName, ios_base::app | ios_base::out);
+		if (good(fileName, 2))
+			f << "\n";
+		f << str;
+		f.close();
+	}
+
+	/*
+	* Function print file
+	* Throws: [0]"Name error"
+	*/
+	void print(string fileName = "") {
+		fileName = fileName.size() == 0 ? Name : fileName;
+		if (good(fileName))
+			throw exception(errors[0].c_str());
+
+		string s;
+		f.open(fileName, ios_base::in);
+		while (getline(f, s))
+			cout << s << "\n";
+		f.close();
+	}
+
+	/*
+	* Function return num from index
+	* Throws: [0]"Name error", [3]"Index out of bound"
+	*/
+	int getNum(int index, string fileName = "") {
+		fileName = fileName.size() == 0 ? Name : fileName;
+		if (good(fileName))
+			throw exception(errors[0].c_str());
+
+		string temp;
+		f.open(fileName, ios_base::in);
+		while (index-- >= 0) 
+			if (!(f >> temp))
+				throw exception(errors[3].c_str());
+		
+		f.close();
+		return stoi(temp);
+	}
+
+	/*
+	* Function return count of num
+	* Throws: [0]"Name error"
+	*/
+	int count(string fileName = "") {
+		fileName = fileName.size() == 0 ? Name : fileName;
+		if (good(fileName))
+			throw exception(errors[0].c_str());
+
+		int count = 0;
+		string temp;
+		f.open(fileName, ios_base::in);
+		while (f >> temp)
+			if (temp.find_first_not_of("-0123456789") == temp.npos)
+				count++;
+		f.close();
+		return count;
+	}
+
+	/*
+	* Function create 2 files with halfs of base file
+	* Throws: [0]"Name error"
+	*/
+	void divide(string fileName = "") {
+		fileName = fileName.size() == 0 ? Name : fileName;
+		if (good(fileName))
+			throw exception(errors[0].c_str());
+
+		vector<int> vec;
+		string temp;
+		//===================================================================
+		f.open(fileName, ios_base::in);
+		
+		while (f >> temp) 
+			vec.push_back(stoi(temp));
+		
+		f.close();
+		//===================================================================
+		f.open("FIRST_" + fileName, ios_base::out | ios_base::trunc);
+
+		int divided = vec.size() / 2;
+
+		f << divided << " ";
+		for (int i = 0; i < divided; i++)
+			f << vec[i] << " ";
+
+		f.close();
+		//===================================================================
+		f.open("SECOND_" + fileName, ios_base::out | ios_base::trunc);
+
+		divided = (vec.size() % 2 ? vec.size() / 2 + 1 : vec.size() / 2);
+
+		f << divided << " ";
+		for (int i = divided; i < vec.size(); i++)
+			f << vec[i] << " ";
+
 		f.close();
 	}
 };
