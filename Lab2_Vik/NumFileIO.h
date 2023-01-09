@@ -156,9 +156,10 @@ public:
 		string temp;
 		f.open(fileName, ios_base::in);
 		while (index-- >= 0) 
-			if (!(f >> temp))
+			if (!(f >> temp)) {
+				f.close();
 				throw exception(errors[3].c_str());
-		
+			}
 		f.close();
 		return stoi(temp);
 	}
@@ -188,7 +189,7 @@ public:
 	*/
 	void divide(string fileName = "") {
 		fileName = fileName.size() == 0 ? Name : fileName;
-		if (good(fileName))
+		if (good(fileName, 3))
 			throw exception(errors[0].c_str());
 
 		vector<int> vec;

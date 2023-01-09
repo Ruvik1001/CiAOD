@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -14,6 +15,7 @@ class Employee {
 private:
 	char number[100], post[100];
 	int salary, children;
+	static int id;
 
 public:
 	Employee(string number = "NONE", string post = "NONE", int salary = 0, int children = 0) {
@@ -73,6 +75,10 @@ public:
 		this->children = children;
 	}
 
+	void setNewDefaultID(int id) {
+		this->id = id;
+	}
+
 	string getNumber() {
 		return string(number);
 	}
@@ -89,11 +95,19 @@ public:
 		return children;
 	}
 
+	int getID() {
+		return id;
+	}
+
+	static int getNewID() {
+		return ++id;
+	}
+
 	friend istream& operator>>(istream& is, Employee& client);
 	friend ostream& operator<<(ostream& os, Employee& client);
 };
 
-
+int Employee::id = 100000;
 
 
 istream& operator>>(istream& is, Employee& employee) {
@@ -109,7 +123,7 @@ istream& operator>>(istream& is, Employee& employee) {
 }
 
 ostream& operator<<(ostream& os, Employee& employee) {
-	os << string(employee.number) << " " << string(employee.post) << " " << to_string(employee.salary) << " " << to_string(employee.children);
+	os << setw(10) << left << string(employee.number) << setw(40) << left << string(employee.post) << setw(10) << left << to_string(employee.salary) << setw(3) << left << to_string(employee.children);
 	return os;
 }
 
@@ -250,7 +264,7 @@ public:
 		Ty* obj = new Ty();
 		try {
 			f.open(fileName, ios_base::in | ios_base::binary);
-			f.seekg(sizeof(Ty) * index, f.beg);
+			f.seekg(sizeof(Ty) * (long long)index, f.beg);
 			if (f.eof())
 				throw;
 			f.read((char*)obj, sizeof(Ty));
