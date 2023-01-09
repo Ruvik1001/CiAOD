@@ -181,9 +181,7 @@ public:
 
 		good(fileName, 1);
 
-		int i = 0;
 		fin.open(fileName, ios_base::binary);
-		
 		T* temp = new T();
 
 		try {
