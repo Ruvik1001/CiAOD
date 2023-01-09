@@ -380,24 +380,26 @@ public:
 		if (good(fileName))
 			throw exception(errors[0].c_str());
 
-		function<void(string, string, int)> rewriteWithout = [&](string from, string to, int without = -1) {
-			Ty obj;
+		Ty obj;
+
+		function<void(string, string, bool)> rewriteWithout = [&](string from, string to, bool without = 0)->void {
 
 			f.open(from, ios_base::in | ios_base::binary);
 			ofstream fout(to, ios_base::binary | ios_base::trunc);
 
+			int i = 0;
 			while (f.read((char*)&obj, sizeof(Ty))) {
-				if (without != 0)
+				if (without != 0 && i != index)
 					fout.write((char*)&obj, sizeof(Ty));
-				without--;
+				i++;
 			}
 
 			fout.close();
 			f.close();
 		};
 
-		rewriteWithout(fileName, "temp_rm.txt", index);
-		rewriteWithout("temp_rm.txt", fileName, -1);
+		rewriteWithout(fileName, "temp_rm.txt", 1);
+		rewriteWithout("temp_rm.txt", fileName, 0);
 	}
 
 	void _remove(int index, string fileName = "") {
