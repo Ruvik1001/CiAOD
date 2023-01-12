@@ -188,6 +188,7 @@ void menu_TesterNFIO() {
 }
 
 void menu_TesterBFIO() {
+	const string T = "part2.txt";
 	BinaryFileIO<Employee> f;
 	string temp, data[4];
 	bool mode = 1;
@@ -218,9 +219,9 @@ void menu_TesterBFIO() {
 
 		switch (_getch()) {
 		case '1':
-			cout << "Enter file name (format *.txt): ";	cin >> temp;
+			//cout << "Enter file name (format *.txt): ";	cin >> temp;
 			try {
-				f.setDefaultFileName(temp);
+				f.setDefaultFileName(T);
 			}
 			catch (const std::exception& ex) {
 				cout << ex.what() << "\n";
@@ -270,7 +271,8 @@ void menu_TesterBFIO() {
 		case '4':
 			if (mode) {
 				try {
-					f.push(Employee(to_string(Employee::getNewID()), unit[rand() % 8].first, unit[rand() % 8].second, rand() % 5));
+					int n = rand() % 8;
+					f.push(Employee(to_string(Employee::getNewID()), unit[n].first, unit[n].second, rand() % 5));
 				}
 				catch (const std::exception& ex) {
 					cout << ex.what() << "\n";
@@ -279,6 +281,7 @@ void menu_TesterBFIO() {
 			else {
 				try {
 					cout << "Enter file name (format *.txt): ";		cin >> temp;
+					cin.get();
 					cout << "Enter employee's id: ";				getline(cin, data[0]);
 					cout << "Enter employee's post: ";				getline(cin, data[1]);
 					cout << "Enter employee's salary: ";			getline(cin, data[2]);
@@ -315,10 +318,12 @@ void menu_TesterBFIO() {
 			if (mode) {
 				try {
 					cout <<
-						"By index 3:\n" <<
+						"By index 3:\n\t";
+					cout <<
 						*f.get(3) << "\n";
 					cout <<
-						"By index 100000:\n" << 
+						"By index 100000:\n\t";
+					cout <<
 						*f.get(100000) << "\n";
 				}
 				catch (const std::exception& ex) {

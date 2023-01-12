@@ -1,0 +1,9 @@
+100001    HR Department                           115000    3  
+100002    Call center                             150000    4  
+100003    Head of Human Resources Department      150000    3  
+100009    General manager                         60000     0  
+100005    Head of Communications Department       80000     0  
+100006    General manager                         75000     3  
+100007    Worker                                  115000    1  
+100008    Shift Supervisor                        150000    4  
+100009    General manager                         60000     0  

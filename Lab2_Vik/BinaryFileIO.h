@@ -114,11 +114,13 @@ istream& operator>>(istream& is, Employee& employee) {
 	string buf[4];
 	is >> buf[0] >> buf[1] >> buf[2] >> buf[3];
 
+	try {
 	strcpy_s(employee.number, 100, buf[0].c_str());
 	strcpy_s(employee.post, 100, buf[1].c_str());
 	employee.salary = stoi(buf[2]);
 	employee.children = stoi(buf[3]);
-
+	}catch (const std::exception&){}
+	
 	return is;
 }
 
@@ -195,6 +197,12 @@ private:
 	}
 
 public:
+	void _cf(string str = "") {
+		str = str.size() == 0 ? Name : str;
+		ofstream fout(str, ios_base::binary);
+		fout.close();
+	}
+
 	/*
 	* Function set default file name
 	* Throws: [0]"Name error"
@@ -261,18 +269,15 @@ public:
 		if (good(fileName))
 			throw exception(errors[0].c_str());
 
-		Ty* obj = new Ty();
-		try {
-			f.open(fileName, ios_base::in | ios_base::binary);
-			f.seekg(sizeof(Ty) * (long long)index, f.beg);
-			if (f.eof())
-				throw;
-			f.read((char*)obj, sizeof(Ty));
-		}
-		catch (...) {
-			f.close();
+		if (index >= count())
 			throw exception(errors[3].c_str());
-		}
+
+		ifstream fin(fileName, ios_base::in | ios_base::binary);
+		Ty* obj = new Ty();
+		
+		fin.seekg(index * sizeof(Ty), fin.beg);
+		fin.read((char*)obj, sizeof(Ty));
+		fin.close();
 
 		return obj;
 	}
@@ -286,10 +291,10 @@ public:
 		if (good(fileName))
 			throw exception(errors[0].c_str());
 		
-		f.open(fileName, ios_base::in | ios_base::binary);
-		f.seekg(0, f.end);
-		int count = f.tellg() / sizeof(Ty);
-		f.close();
+		ifstream fin(fileName, ios_base::in | ios_base::binary);
+		fin.seekg(0, f.end);
+		int count = fin.tellg() / sizeof(Ty);
+		fin.close();
 
 		return count;
 	}
@@ -306,8 +311,9 @@ public:
 		Ty obj;
 		f.open(fileName, ios_base::in | ios_base::binary);
 		ofstream to("Simple_" + fileName, ios_base::trunc);
-		while (f.read((char*)&obj, sizeof(Ty)))
+		while (f.read((char*)&obj, sizeof(Ty))) {
 			to << obj << "\n";
+		}
 		to.close();
 		f.close();
 	}
@@ -322,9 +328,11 @@ public:
 
 		Ty obj;
 		f.open("Binary_" + fileName, ios_base::out | ios_base::binary | ios_base::trunc);
+
 		ifstream from(fileName, ios_base::in);
 		while (from >> obj)
 			f.write((char*)&obj, sizeof(Ty));
+
 		from.close();
 		f.close();
 	}
@@ -334,9 +342,12 @@ public:
 		if (good(fileName))
 			throw exception(errors[0].c_str());
 
+		if (index >= count())
+			throw exception(errors[3].c_str());
+
 		try {
-			f.open(fileName, ios_base::ate | ios_base::out | ios_base::binary);
-			f.seekg(sizeof(Ty) * index, f.beg);
+			f.open(fileName, ios_base::ate | ios_base::in | ios_base::out | ios_base::binary);
+			f.seekp(f.beg + index * sizeof(Ty));
 			if (f.eof())
 				throw;
 			f.write((char*)&obj, sizeof(Ty));
@@ -359,7 +370,7 @@ public:
 		bool success = false;
 		f.open(fileName, ios_base::in | ios_base::binary);
 		while (f.read((char*)&obj, sizeof(Ty))) {
-			if (obj[indexOfProperty] == key) {
+			if (K(obj[indexOfProperty]) == key) {
 				success = true;
 				break;
 			}
@@ -401,11 +412,12 @@ public:
 			f.open(from, ios_base::in | ios_base::binary);
 			ofstream fout(to, ios_base::binary | ios_base::trunc);
 
-			int i = 0;
+			int i = -1;
 			while (f.read((char*)&obj, sizeof(Ty))) {
-				if (without != 0 && i != index)
-					fout.write((char*)&obj, sizeof(Ty));
 				i++;
+				if (without == true && i == index)
+					continue;
+				fout.write((char*)&obj, sizeof(Ty));
 			}
 
 			fout.close();
@@ -421,14 +433,17 @@ public:
 		if (good(fileName))
 			throw exception(errors[0].c_str());
 
+		if (index >= count())
+			throw exception(errors[3].c_str());
+
 		Ty temp;
 		f.open(fileName, ios_base::binary | ios_base::in | ios_base::out | ios_base::ate);
 
-		f.seekg(sizeof(Ty) * (count() - 1));
+		f.seekg(sizeof(Ty) * (count() - 1), f.beg);
 		f.read((char*)&temp, sizeof(Ty));
 		f.clear();
 
-		f.seekp(sizeof(Ty) * index, f.beg);
+		f.seekp(index * sizeof(Ty), f.beg);
 		f.write((char*)&temp, sizeof(Ty));
 
 		f.close();
@@ -451,17 +466,17 @@ inline void BinaryFileIO<Employee>::doubleSalary(string fileName_posts, string f
 	fin.close();
 
 	for (auto x : vec) {
-		while (find<const char*>(x.c_str(), 1, fileName) != -1) {
-			Employee t(*get(find<const char*>(x.c_str(), 1, fileName), fileName));
+		while (find<string>(x, 1, fileName) != -1) {
+			Employee t(*get(find<string>(x, 1, fileName), fileName));
 			t.setSalary(t.getSalary() * 2);
 			t.setPost("_" + t.getPost());
-			replace(find<const char*>(x.c_str(), 1, fileName), t, fileName);
+			replace(find<string>(x, 1, fileName), t, fileName);
 		}
 
-		while (find<const char*>(("_" + x).c_str(), 1, fileName) != -1) {
-			Employee t(*get(find<const char*>(x.c_str(), 1, fileName), fileName));
+		while (find<string>(("_" + x), 1, fileName) != -1) {
+			Employee t(*get(find<string>(("_" + x), 1, fileName), fileName));
 			t.setPost(t.getPost().substr(1));
-			replace(find<const char*>(("_" + x).c_str(), 1, fileName), t, fileName);
+			replace(find<string>(("_" + x), 1, fileName), t, fileName);
 		}
 	}
 }
@@ -473,12 +488,12 @@ inline void BinaryFileIO<Employee>::removeNumbers(string fileName_numbes, string
 
 	ifstream fin(fileName_numbes, ios_base::binary);
 	vector<string> vec;	string str;
-	char num[100];
-	while (fin.read(num, sizeof(char[100])))
-		vec.push_back(string(num));
+
+	while (fin >> str)
+		vec.push_back(string(str));
 	fin.close();
 
 	for (auto x : vec)
-		while (find<const char*>(x.c_str(), 0, fileName) != -1)
-			remove(find<const char*>(x.c_str(), 0, fileName), fileName);
+		while (find<string>(x, 0, fileName) != -1)
+			remove(find<string>(x, 0, fileName), fileName);
 }
