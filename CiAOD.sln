@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab1_Sofi", "Lab1_Sofi\Lab1
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab2_Sofi", "Lab2_Sofi\Lab2_Sofi.vcxproj", "{B0A30326-4E21-481C-9447-5B01794F2CFD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab3_Sofi", "Lab3_Sofi\Lab3_Sofi.vcxproj", "{01EAC377-469A-4EBD-944B-87C6C85E6AF9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{B0A30326-4E21-481C-9447-5B01794F2CFD}.Release|x64.Build.0 = Release|x64
 		{B0A30326-4E21-481C-9447-5B01794F2CFD}.Release|x86.ActiveCfg = Release|Win32
 		{B0A30326-4E21-481C-9447-5B01794F2CFD}.Release|x86.Build.0 = Release|Win32
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Debug|x64.ActiveCfg = Debug|x64
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Debug|x64.Build.0 = Debug|x64
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Debug|x86.ActiveCfg = Debug|Win32
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Debug|x86.Build.0 = Debug|Win32
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Release|x64.ActiveCfg = Release|x64
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Release|x64.Build.0 = Release|x64
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Release|x86.ActiveCfg = Release|Win32
+		{01EAC377-469A-4EBD-944B-87C6C85E6AF9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

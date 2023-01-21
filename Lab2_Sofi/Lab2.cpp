@@ -463,7 +463,6 @@ int BFIOM_TESTER() {
 
 int main(string arg[]) {
 	srand(time(NULL));
-	BFIOM_TESTER();
 	while (true) {
 		cout << "PUSH:\n" <<
 			"1 - FileIOManager\n" <<
