@@ -463,6 +463,7 @@ int BFIOM_TESTER() {
 
 int main(string arg[]) {
 	srand(time(NULL));
+	cout << "Grishina Sofia IKBO-06-21\n";
 	while (true) {
 		cout << "PUSH:\n" <<
 			"1 - FileIOManager\n" <<

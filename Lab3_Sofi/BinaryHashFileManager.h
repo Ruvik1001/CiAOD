@@ -43,7 +43,7 @@ public:
 
 	void print() {
 		cout << "Element in the table | capacity: " << table.count() << " | " << table.estimatedCapacity() << "\n";
-		file.print();
+		//file.print();
 	}
 
 	void remove(int key, int from = 0, string fileName = "") {
