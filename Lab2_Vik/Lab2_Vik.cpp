@@ -188,7 +188,6 @@ void menu_TesterNFIO() {
 }
 
 void menu_TesterBFIO() {
-	const string T = "part2.txt";
 	BinaryFileIO<Employee> f;
 	string temp, data[4];
 	bool mode = 1;
@@ -219,9 +218,9 @@ void menu_TesterBFIO() {
 
 		switch (_getch()) {
 		case '1':
-			//cout << "Enter file name (format *.txt): ";	cin >> temp;
+			cout << "Enter file name (format *.txt): ";	cin >> temp;
 			try {
-				f.setDefaultFileName(T);
+				f.setDefaultFileName(temp);
 			}
 			catch (const std::exception& ex) {
 				cout << ex.what() << "\n";

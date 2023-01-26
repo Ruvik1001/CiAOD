@@ -1,0 +1,15 @@
+100001    Worker                                  60000     1  
+100002    General manager                         115000    4  
+100003    Commercial Director                     150000    4  
+100004    Shift Supervisor                        75000     2  
+100005    Commercial Director                     150000    1  
+100006    Shift Supervisor                        75000     0  
+100007    Head of Human Resources Department      100000    4  
+100008    Head of Communications Department       75000     3  
+100009    Head of Communications Department       75000     3  
+100010    General manager                         115000    3  
+100011    Commercial Director                     150000    2  
+100012    Head of Communications Department       75000     2  
+100013    General manager                         115000    4  
+100014    General manager                         115000    4  
+100015    Head of Human Resources Department      100000    4  
