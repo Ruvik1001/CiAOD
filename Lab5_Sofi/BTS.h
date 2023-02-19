@@ -75,6 +75,11 @@ public:
 	bool find(Ty data);
 	void remove(Ty data);
 
+	template <typename K>
+	bool find(K data);
+	template <typename K>
+	void remove(K data);
+
 	void print();	
 	void printTree(Node* root, Trunk* prev, bool isLeft);
 	
@@ -220,4 +225,45 @@ inline void BTS<Ty>::get_all(vector<Ty>& v, Node* root) {
 	v.push_back(root->data);
 	if (root->left) get_all(v, root->left);
 	if (root->right) get_all(v, root->right);
+}
+
+template<typename Ty>
+template<typename K>
+bool BTS<Ty>::find(K data)
+{
+	Node* ptr = head;
+
+	while (true) {
+		if (ptr->data == data)
+			return true;
+
+		ptr->data > data ? ptr = ptr->left : ptr = ptr->right;
+
+		if (!ptr)
+			return false;
+	}
+}
+
+template<typename Ty>
+template<typename K>
+void BTS<Ty>::remove(K data)
+{
+	BTS* temp = new BTS();
+	Node* ptr = head;
+
+	const std::function<void(Node*)> f = [&](Node* _ptr) {
+		if (!_ptr)
+			return;
+		if (!(_ptr->data == data)) {
+			temp->push(_ptr->data);
+		}
+		f(_ptr->left);
+		f(_ptr->right);
+	};
+
+	f(head);
+
+	delete head;
+	head = temp->head;
+	temp->head = nullptr;
 }

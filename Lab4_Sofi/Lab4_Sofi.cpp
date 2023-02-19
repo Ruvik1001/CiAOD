@@ -1,4 +1,6 @@
-﻿#include "Tree.h"
+﻿#define SHOW_CALCULATE_LOGIC_
+
+#include "Tree.h"
 
 using namespace std;
 
@@ -60,7 +62,7 @@ int main() {
 			cout << "Enter infix: "; cin >> postfix;
 			root = construct(inf_to_postf(postfix.c_str()));
 			cout << "Expression:\n";
-			dump4(root);
+			print(root);
 			break;
 
 		case 7:
@@ -93,7 +95,7 @@ int main() {
 	preforder(root);
 
 	cout << "\n=================================================\n\n";
-	dump4(root);
+	print(root);
 
 	cout << "\n=================================================\n\n";
 	cout << "Answer: " << calculate(root) << "\n";

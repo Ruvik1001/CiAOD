@@ -28,7 +28,7 @@ public:
 		this->get_all(v, this->get_head());
 		long size = v.size();
 		file.write((char*)&size, sizeof(size));
-		file.write((char*)&v[0], v.size() * (long)sizeof(obj));
+		file.write((char*)&v[0], v.size() * (long)sizeof(IncuranceClient));
 		file.close();
 	}
 

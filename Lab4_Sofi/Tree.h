@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <functional>
 
 using namespace std;
 
@@ -371,4 +372,58 @@ double calculate(Node* root) {
 double precalculate(string s) {
     Node* root = construct(preToPost(s));
     return calculate(root);
+}
+
+struct _Helper //вспомогательная структура для вывода дерева
+{
+    _Helper* _prev;
+    string str;
+
+    _Helper(_Helper* _prev, string str) {
+        this->_prev = _prev;
+        this->str = str;
+    }
+
+    // Вспомогательная функция для печати ветвей дерева
+    static void showTrunks(_Helper* p) {
+        if (p == nullptr)
+            return;
+        showTrunks(p->_prev);
+        cout << p->str;
+    }
+};
+
+void print(Node* root) {
+    function<void(Node*, _Helper*, bool)> _print = [&_print](Node* root, _Helper* _prev, bool isLeft)->void {
+        if (root == nullptr)
+            return;
+
+        string prev_str = "    ";
+        _Helper* trunk = new _Helper(_prev, prev_str);
+
+        _print(root->right, trunk, true);
+
+        if (!_prev)
+            trunk->str = "===";
+        else if (isLeft) {
+            trunk->str = ".===";
+            prev_str = "   |";
+        }
+        else {
+            trunk->str = "`===";
+            _prev->str = prev_str;
+        }
+
+        _Helper::showTrunks(trunk);
+        cout << " " << root->data << endl;
+
+        if (_prev) {
+            _prev->str = prev_str;
+        }
+        trunk->str = "   |";
+
+        _print(root->left, trunk, false);
+    };
+
+    _print(root, nullptr, 0);
 }

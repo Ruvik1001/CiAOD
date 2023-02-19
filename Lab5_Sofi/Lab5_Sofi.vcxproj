@@ -143,10 +143,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AVL.h" />
+    <ClInclude Include="BinaryFileIOManager.h" />
+    <ClInclude Include="BinaryHashFileManager.h" />
     <ClInclude Include="BTS.h" />
     <ClInclude Include="FCAVL.h" />
     <ClInclude Include="FCBTS.h" />
-    <ClInclude Include="File.h" />
+    <ClInclude Include="HashTable.h" />
     <ClInclude Include="obj.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
